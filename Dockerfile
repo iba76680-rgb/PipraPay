@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     pdo pdo_mysql mysqli zip mbstring \
     exif pcntl bcmath gd
 
-RUN a2enmod rewrite headers
+RUN a2dismod mpm_event mpm_worker 2>/dev/null; \
+    a2enmod mpm_prefork rewrite headers
 
 RUN echo '<Directory /var/www/html>\n\
     Options Indexes FollowSymLinks\n\
