@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y \
     php8.1-gd \
     php8.1-xml \
     php8.1-bcmath \
+    php8.1-imagick \
     libapache2-mod-php8.1 \
     && apt-get clean
 
