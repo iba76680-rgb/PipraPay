@@ -23,6 +23,8 @@ RUN echo '<Directory /var/www/html>\n\
     Require all granted\n\
 </Directory>' >> /etc/apache2/apache2.conf
 
+RUN rm -rf /var/www/html/*
+
 COPY . /var/www/html/
 
 RUN chown -R www-data:www-data /var/www/html \
