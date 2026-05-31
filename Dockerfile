@@ -1,22 +1,22 @@
-FROM php:8.2-apache
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
-    libzip-dev zip unzip curl libpng-dev \
-    libonig-dev libxml2-dev \
-    && docker-php-ext-install \
-    pdo pdo_mysql mysqli zip mbstring \
-    exif pcntl bcmath gd \
+    apache2 \
+    php8.1 \
+    php8.1-mysql \
+    php8.1-zip \
+    php8.1-mbstring \
+    php8.1-curl \
+    php8.1-gd \
+    php8.1-xml \
+    php8.1-bcmath \
+    libapache2-mod-php8.1 \
     && apt-get clean
 
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.conf \
-    /etc/apache2/mods-enabled/mpm_event.load \
-    /etc/apache2/mods-enabled/mpm_worker.conf \
-    /etc/apache2/mods-enabled/mpm_worker.load \
-    && ln -sf /etc/apache2/mods-available/mpm_prefork.conf \
-    /etc/apache2/mods-enabled/mpm_prefork.conf \
-    && ln -sf /etc/apache2/mods-available/mpm_prefork.load \
-    /etc/apache2/mods-enabled/mpm_prefork.load \
-    && a2enmod rewrite headers
+RUN a2dismod mpm_event && \
+    a2enmod mpm_prefork rewrite headers php8.1
 
 RUN echo '<Directory /var/www/html>\n\
     AllowOverride All\n\
@@ -25,8 +25,9 @@ RUN echo '<Directory /var/www/html>\n\
 
 COPY . /var/www/html/
 
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
