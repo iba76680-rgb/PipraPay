@@ -18,14 +18,18 @@ RUN apt-get update && apt-get install -y \
 RUN a2dismod mpm_event && \
     a2enmod mpm_prefork rewrite headers php8.1
 
-RUN echo '<Directory /var/www/html>\n\
-    AllowOverride All\n\
-    Require all granted\n\
-</Directory>' >> /etc/apache2/apache2.conf
-
 RUN rm -rf /var/www/html/*
 
 COPY . /var/www/html/
+
+RUN echo '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html\n\
+    DirectoryIndex index.php index.html\n\
+    <Directory /var/www/html>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+</VirtualHost>' > /etc/apache2/sites-enabled/000-default.conf
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html
