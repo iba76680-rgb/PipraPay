@@ -27,13 +27,15 @@ RUN echo '<VirtualHost *:80>\n\
     DocumentRoot /var/www/html\n\
     DirectoryIndex index.php index.html\n\
     <Directory /var/www/html>\n\
+        Options Indexes FollowSymLinks\n\
         AllowOverride All\n\
         Require all granted\n\
     </Directory>\n\
 </VirtualHost>' > /etc/apache2/sites-enabled/000-default.conf
 
 RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+    && find /var/www/html -type d -exec chmod 755 {} \; \
+    && find /var/www/html -type f -exec chmod 644 {} \;
 
 EXPOSE 80
 
